@@ -23,3 +23,23 @@ VALUES
 
 /*  Execute this query to drop the tables */
 -- DROP TABLE products;
+
+-- RESPOSTA --
+
+SELECT
+	x.name,
+    x.price
+FROM(
+    SELECT 
+        id,
+        name,
+        type,
+        CASE
+            WHEN type LIKE 'A' THEN 20.0
+            WHEN type LIKE 'B' THEN 70.0
+            ELSE 530.5
+        END as price
+    FROM  
+        products
+    ORDER BY type ASC, id DESC
+)x
