@@ -27,6 +27,8 @@ VALUES
   /*  Execute this query to drop the tables */
   -- DROP TABLE vircities us; --
 
+  -- RESPOSTA --
+
 SELECT 
     city_name, 
     population
