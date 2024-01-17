@@ -52,26 +52,25 @@ VALUES
 -- RESPOSTA --
 
 SELECT
-	x.u1_name,
-    x.u2_name
-FROM(
-	SELECT
-        LEAST(u1.name, u2.name) AS u1_name,
-        GREATEST(u1.name, u2.name) AS u2_name
+    s.u1_name,
+    s.u2_name
+FROM (
+    SELECT
+        CASE WHEN u1.posts <= u2.posts THEN u1.user_name ELSE u2.user_name END AS u1_name,
+        CASE WHEN u1.posts <= u2.posts THEN u1.user_id ELSE u2.user_id END AS u1_id,
+        CASE WHEN u1.posts <= u2.posts THEN u2.user_name ELSE u1.user_name END AS u2_name,
+        CASE WHEN u1.posts <= u2.posts THEN u2.user_id ELSE u1.user_id END AS u2_id
     FROM
-        followers f
+        followers f1
     JOIN
-        users u1 ON f.user_id_fk = u1.user_id
+        followers f2 ON f1.user_id_fk = f2.following_user_id_fk
+        AND f1.following_user_id_fk = f2.user_id_fk
     JOIN
-        users u2 ON f.following_user_id_fk = u2.user_id
+        users u1 ON f1.user_id_fk = u1.user_id
+    JOIN
+        users u2 ON f1.following_user_id_fk = u2.user_id
     WHERE
-        EXISTS (
-            SELECT 1
-            FROM followers f2
-            WHERE f2.user_id_fk = f.following_user_id_fk
-            AND f2.following_user_id_fk = f.user_id_fk
-        )
-    ORDER BY
-        u1.user_id
-)x 
-GROUP BY u1_name, u2_name;
+        u1.user_id < u2.user_id
+) AS s
+ORDER BY
+    s.u1_id;
